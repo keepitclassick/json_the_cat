@@ -1,24 +1,19 @@
 const request = require('request');
-const breed = process.argv.slice(2); //accept command line args
-const url = 'https://api.thecatapi.com/v1/breeds/search?q=' + breed;
 
-const fetchBreedDetails = function(breed, callback) {
+
+const fetchBreedDescription = function(breedName, callback) {
+  let url = 'https://api.thecatapi.com/v1/breeds/search?q=' + breedName;
   request(url, (error, response, body) => {
-    if (error) {
-      callback(error,null);
-      return;
-    } else {
+    if (body) {
       const data = JSON.parse(body);
-      let breed = data[0]
-      if (breed === undefined) {
-        console.log('No such cat :(');
-        return;
+      if (data[0] === undefined) {
+      callback (null,'No such cat :('); //return error saying no such cat if undef
       } else {
-        console.log(data[0].description);
+      let desc = data[0].description; //save the description to a variable to pass to callback
+      callback(error, desc)
       }
-    }
-  });
+      }
+  })
 };
 
-fetchBreedDetails();
-
+module.exports = { fetchBreedDescription };
